@@ -234,7 +234,7 @@ handlePlayerControls() {
     player.update();
   }
 }
-showRank() {
+
  showRank(){
   swal({
     title: `Incrivel! ${"\n"} Sua posição: ${"\n"} ${player.rank}`,
