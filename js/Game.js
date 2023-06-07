@@ -2,11 +2,11 @@ class Game {
   constructor() {
     this.resetTitle = createElement("h2");
     this.resetButton = createButton("");
-    
-    this.leadeboardTitle = createElement("h2");
+
+    this.leaderboardTitle = createElement('h2');
 
     this.leader1 = createElement("h2");
-    this.leader2 = createElement("h2");
+    this.leader2 = createElement("h2")
   }
 
   getState() {
@@ -38,7 +38,7 @@ class Game {
 
     cars = [car1, car2];
 
-    // C38 TA
+    // C38 AP
     fuels = new Group();
     powerCoins = new Group();
 
@@ -49,7 +49,7 @@ class Game {
     this.addSprites(powerCoins, 18, powerCoinImage, 0.09);
   }
 
-  // C38 TA
+  // C38 AP
   addSprites(spriteGroup, numberOfSprites, spriteImage, scale) {
     for (var i = 0; i < numberOfSprites; i++) {
       var x, y;
@@ -69,34 +69,37 @@ class Game {
     form.hide();
     form.titleImg.position(40, 50);
     form.titleImg.class("gameTitleAfterEffect");
+
     this.resetTitle.html("Reiniciar o Jogo");
     this.resetTitle.class("resetText");
-    this.resetTitle.position(width / 2 + 200, 40);
+    this.resetTitle.position(width/2 +200 , 40);
 
     this.resetButton.class("resetButton");
-    this.resetButton.position(width / 2 + 230, 100);
-    this.leadeboardTitle.html("Placar");
-    this.leadeboardTitle.class("resetText");
-    this.leadeboardTitle.position(width / 3 - 60, 40);
+    this.resetButton.position(width/2 + 230, 100);
+
+    this.leaderboardTitle.html("Placar");
+    this.leaderboardTitle.class("resetText");
+    this.leaderboardTitle.position(width/3 - 60, 40);
 
     this.leader1.class("leadersText");
-    this.leader1.position(width / 3 - 50, 80);
+    this.leader1.position(width/3 - 50, 80);
 
     this.leader2.class("leadersText");
-    this.leader2.position(width / 3 - 50, 130);
+    this.leader2.position(width/3 - 50 , 130);
   }
 
   play() {
     this.handleElements();
     this.handleResetButton();
+
+    
     Player.getPlayersInfo();
     player.getCarsAtEnd();
 
     if (allPlayers !== undefined) {
       image(track, 0, -height * 5, width, height * 6);
       this.showLeaderboard();
-
-      //índice da array
+      //índice da matriz
       var index = 0;
       for (var plr in allPlayers) {
         //adicione 1 ao índice para cada loop
@@ -109,7 +112,7 @@ class Game {
         cars[index - 1].position.x = x;
         cars[index - 1].position.y = y;
 
-        // C38  SA
+        // C38  AA
         if (index === player.index) {
           stroke(10);
           fill("red");
@@ -117,10 +120,10 @@ class Game {
 
           this.handleFuel(index);
           this.handlePowerCoins(index);
-          
-          // Altere a posição da câmera na direção y
-          camera.position.x = cars[index - 1].position.x;
-          camera.position.y = cars[index - 1].position.y;
+
+          //alterar a posição da camera
+          camera.position.x = cars[index-1].position.x;
+          camera.position.y=cars[index-1].position.y;
 
         }
       }
@@ -130,10 +133,12 @@ class Game {
         player.positionY += 10;
         player.update();
       }
-      this.handlePlayerControls();
-      const finishLine = height * 6 - 100;
 
-      if (player.positionY > finishLine) {
+      this.handlePlayerControls();
+
+      const finishLine = height* 6 -100;
+
+      if (player.positionY > finishLine){
         gameState = 2;
         player.rank += 1;
         Player.updateCarsAtEnd(player.rank);
@@ -164,31 +169,50 @@ class Game {
       collected.remove();
     });
   }
+  handleResetButton(){
+    this.resetButton.mousePressed(()=>{
+      database.ref("/").set({
+        playerCount: 0,
+        gameState:0,
+        players: {}
+      });
+      window.location.reload();
+    })
+  }
 
-handleResetButton() {
-  this.resetButton.mousePressed(() => {
-    database.ref("/").set({
-      playerCount: 0,
-      gameState: 0,
-      players: {}
-    });
-    window.location.reload();
-  });
-}
-showLeaderboard() {
+  handlePlayerControls(){
+    if(keyIsDown(UP_ARROW)){
+      player.positionY += 10;
+      player.update();
+    }
+
+    if(keyIsDown(LEFT_ARROW) && player.positionX > width/3 -50   ){
+      player.positionX -= 5;
+      player.update();
+    }
+    
+    if(keyIsDown(RIGHT_ARROW) && player.positionX < width/2 + 300 ){
+      player.positionX += 5;
+      player.update();
+    }
+    
+  }
+
+showLeaderboard(){
   var leader1, leader2;
   var players = Object.values(allPlayers);
-  if (
-    (players[0].rank === 0 && players[1].rank === 0) ||
+
+  if(
+    (players[0].rank === 0 && players[1].rank ===0) ||
     players[0].rank === 1
-  ) {
-    // &emsp;    Esta tag é usada para exibir quatro espaços.
+  ){
+// &emsp;    Esta tag é usada para exibir quatro espaços.
     leader1 =
-      players[0].rank +
-      "&emsp;" +
-      players[0].name +
-      "&emsp;" +
-      players[0].score;
+    players[0].rank +
+    "&emsp;"+
+    players[0].name +
+    "&emsp;"+
+    players[0].score;
 
     leader2 =
       players[1].rank +
@@ -218,24 +242,7 @@ showLeaderboard() {
   this.leader2.html(leader2);
 }
 
-handlePlayerControls() {
-  if (keyIsDown(UP_ARROW)) {
-    player.positionY += 10;
-    player.update();
-  }
-
-  if (keyIsDown(LEFT_ARROW) && player.positionX > width / 3 - 50) {
-    player.positionX -= 5;
-    player.update();
-  }
-
-  if (keyIsDown(RIGHT_ARROW) && player.positionX < width / 2 + 300) {
-    player.positionX += 5;
-    player.update();
-  }
-}
-
- showRank(){
+showRank(){
   swal({
     title: `Incrivel! ${"\n"} Sua posição: ${"\n"} ${player.rank}`,
     text: "você alcançou a linha de chegada com sucesso",
@@ -244,4 +251,7 @@ handlePlayerControls() {
     confirmButtonText: "OK"
   });
 }
+
 }
+
+

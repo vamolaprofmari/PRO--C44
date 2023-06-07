@@ -5,7 +5,6 @@ var form, player, playerCount;
 var allPlayers, car1, car2,fuels, powerCoins;
 var cars = [];
 var fuelImage, powerCoinImage;
-var game;
 //BP
 function preload() {
   backgroundImage = loadImage("assets/background.png");
@@ -35,10 +34,6 @@ function draw() {
 
   if (gameState === 1) {
     game.play();
-  }
-  if (gameState === 2) {
-    game.showLeaderboard();
-    //game.end();
   }
 }
 
